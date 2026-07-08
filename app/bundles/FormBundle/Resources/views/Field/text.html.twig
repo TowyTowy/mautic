@@ -82,6 +82,9 @@
 {% endif %}
 
 {# Container #}
+{# Preserve any style already set on the container (e.g. the captcha honeypot's display:none) so it is not overwritten by the width style. #}
+{% set widthStyle = 'width: ' ~ field.fieldWidth %}
+{% set existingStyle = containerAttributes.style is defined ? (containerAttributes.style is iterable ? containerAttributes.style|join(' ') : containerAttributes.style) : '' %}
 {% set containerAttributes = containerAttributes|merge({
         'id': 'mauticform' ~ formName|default('') ~ '_' ~ id,
         'class': containerAttributes.class|default([])|merge([
@@ -89,7 +92,7 @@
           'mauticform-' ~ containerClass,
           'mauticform-field-' ~ order
         ]),
-        'style': 'width: ' ~ field.fieldWidth
+        'style': existingStyle is empty ? widthStyle : existingStyle ~ ' ' ~ widthStyle
 }) %}
 
 {% if field.parent and fields[field.parent] is defined %}
